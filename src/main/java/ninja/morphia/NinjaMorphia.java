@@ -23,10 +23,10 @@ import com.mongodb.MongoClient;
 @Singleton
 public class NinjaMorphia {
     private Datastore datastore;
-    private final static String MONGODB_HOST = "ninjamorhia.mongodb.host";
-    private final static String MONGODB_PORT = "ninjamorhia.mongodb.port";
-    private final static String MONGODB_NAME = "ninjamorhia.mongodb.name";
-    private final static String MORPHIA_PACKAGE_NAME = "ninjamorhia.models.package";
+    private final static String MONGODB_HOST = "ninjamorphia.mongodb.host";
+    private final static String MONGODB_PORT = "ninjamorphia.mongodb.port";
+    private final static String MONGODB_NAME = "ninjamorphia.mongodb.name";
+    private final static String MORPHIA_PACKAGE_NAME = "ninjamorphia.models.package";
     private final NinjaProperties ninjaProperties;
     private final Logger logger;
     
@@ -52,7 +52,7 @@ public class NinjaMorphia {
             this.datastore = new Morphia().mapPackage(morphiaPackage).createDatastore(mongoClient, mongoDbName);
             this.logger.info("Created datastore for MongoDB: " + mongoDbName);
         } else {
-            this.logger.error("Failed to created morphia instance");
+            this.logger.error("Failed to created morphia instance. No available mongoclient.");
         }
     }
     
@@ -66,24 +66,42 @@ public class NinjaMorphia {
     }
     
     /**
-     * Convinent mehod for overwriting the mongoClient.
+     * Convinent mehod for overwriting the morphia
+     * object with a given MongoClient
      * 
-     * @param mongoClient A created MongoClient
+     * @param A created MongoClient object
      */
     public void setMongoClient(MongoClient mongoClient) {
+        Preconditions.checkNotNull(mongoClient);
+        
         this.datastore = new Morphia().mapPackage(MORPHIA_PACKAGE_NAME).createDatastore(mongoClient, MONGODB_NAME);
+    }
+    
+    /**
+     * @deprecated Replaced by {@link #findById(Class<T> clazz, Object id)}
+     */
+    public <T extends Object> T findByObjectId(Class<T> clazz, Object id) {
+        Preconditions.checkNotNull(clazz);
+        Preconditions.checkNotNull(id);
+
+        String objectId = null;
+        if (!(id instanceof ObjectId)) {
+            objectId = String.valueOf(id);
+        }
+        
+        return this.datastore.get(clazz, new ObjectId(objectId));  
     }
     
     /**
      * Retrieves a mapped morphia object from mongodb. If the id is not of 
      * type ObjectId, it will we converted to ObjectId
      * 
-     * @param clazz The mapped morphia class
      * @param id The id of the object
+     * @param clazz The mapped morphia class
      * 
      * @return The reqeusted class from mongodb or null if none found
      */
-    public <T extends Object> T findByObjectId(Class<T> clazz, Object id) {
+    public <T extends Object> T findById(Object id, Class<T> clazz) {
         Preconditions.checkNotNull(clazz);
         Preconditions.checkNotNull(id);
 
@@ -99,7 +117,7 @@ public class NinjaMorphia {
      * Retrieves all mapped morphia objects from mongodb
      * 
      * @param clazz The mapped morphia class
-     * @return A list of mapped morphia objects
+     * @return A list of mapped morphia objects or an empty list of none found
      */
     public <T extends Object> List<T> findAll(Class<T> clazz) {
         Preconditions.checkNotNull(clazz);

@@ -3,8 +3,7 @@ package ninja.morphia;
 import com.google.inject.AbstractModule;
 
 /**
- * Google juice module loader for injecting in
- * ninja framework applications
+ * Google juice module loader for injection in ninja framework applications
  * 
  * @author skubiak
  *

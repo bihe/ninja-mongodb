@@ -2,14 +2,14 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.ninjaframework</groupId>
-	<artifactId>ninja-morphia</artifactId>
+	<artifactId>ninja-morphia-module</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<name>Ninja Framework Mophia Module</name>
-	<description>This is an easly plugable module for the Ninja web framework to work with morphia and mongodb by providing a convinent service, providing you with all dependencies and some testing resources.</description>
+	<description>This is an easly plugable module for the Ninja web framework to work with morphia and mongodb by providing a convinent service, providing you with all dependencies and some testing utilites.</description>
 	<url>https://github.com/svenkubiak/ninja-morphia</url>
 	<licenses>
 		<license>
