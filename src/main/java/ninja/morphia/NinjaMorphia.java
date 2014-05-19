@@ -20,8 +20,10 @@ public class NinjaMorphia {
     private Datastore datastore;
     private final NinjaProperties ninjaProperties;
     private final Logger logger;
-    private final String MORPHIA_PACKAGE_NAME = "morphia.models.package";
-    private final String MORPHIA_DB_NAME = "morphia.db.name";
+    private final String MONGODB_HOST = "ninjamorhia.mongodb.host";
+    private final String MONGODB_PORT = "ninjamorhia.mongodb.port";
+    private final String MONGODB_NAME = "ninjamorhia.mongodb.name";
+    private final String MORPHIA_PACKAGE_NAME = "ninjamorhia.models.package";
     
     @Inject
     private NinjaMorphia(Logger logger, NinjaProperties ninjaProperties) {
@@ -30,17 +32,20 @@ public class NinjaMorphia {
         
         MongoClient mongoClient = null;
         try {
-            mongoClient = new MongoClient();
+            final String mongoDbHost = this.ninjaProperties.getWithDefault(MONGODB_HOST, "127.0.0.1");
+            final int mongoDbPort = this.ninjaProperties.getIntegerWithDefault(MONGODB_PORT, 27107);
+            
+            mongoClient = new MongoClient(mongoDbHost, mongoDbPort);
         } catch (UnknownHostException e) {
             this.logger.error("Failed to connect to mongo db", e);
         }
         
         if (mongoClient != null) {
+            final String mongoDbName = this.ninjaProperties.getWithDefault(MONGODB_NAME, "ninjamorphia");
             final String morphiaPackage = this.ninjaProperties.getWithDefault(MORPHIA_PACKAGE_NAME, "models");
-            final String morphiaDbName = this.ninjaProperties.getWithDefault(MORPHIA_DB_NAME, "ninjamorphia");
             
-            this.datastore = new Morphia().mapPackage(morphiaPackage).createDatastore(mongoClient, morphiaDbName);
-            this.logger.info("Created DataStore for MongoDB: " + morphiaDbName);
+            this.datastore = new Morphia().mapPackage(morphiaPackage).createDatastore(mongoClient, mongoDbName);
+            this.logger.info("Created DataStore for MongoDB: " + mongoDbName);
         } else {
             this.logger.error("Failed to created morphia instance");
         }
@@ -51,7 +56,7 @@ public class NinjaMorphia {
     }
     
     public void setMongoClient(MongoClient mongoClient) {
-        this.datastore = new Morphia().mapPackage(MORPHIA_PACKAGE_NAME).createDatastore(mongoClient, MORPHIA_DB_NAME);
+        this.datastore = new Morphia().mapPackage(MORPHIA_PACKAGE_NAME).createDatastore(mongoClient, MONGODB_NAME);
     }
     
     public <T extends Object> T findByObjectId(Class<T> clazz, Object id) {
