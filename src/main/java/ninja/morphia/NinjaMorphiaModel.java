@@ -16,7 +16,7 @@ public class NinjaMorphiaModel implements Serializable {
     @Id
     protected ObjectId objectId;
 
-    public ObjectId getObjectId() {
-        return objectId;
+    public ObjectId getId() {
+        return this.objectId;
     }
 }

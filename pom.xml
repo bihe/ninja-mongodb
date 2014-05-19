@@ -8,7 +8,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-	<name>Ninja Framework Mophia Module</name>
+	<name>Ninja Framework Morphia Module</name>
 	<description>This is an easly plugable module for the Ninja web framework to work with morphia and mongodb by providing a convinent service, providing you with all dependencies and some testing utilites.</description>
 	<url>https://github.com/svenkubiak/ninja-morphia</url>
 	<licenses>
@@ -54,19 +54,6 @@
 			<groupId>org.mongodb.morphia</groupId>
 			<artifactId>morphia</artifactId>
 			<version>0.107</version>
-		</dependency>
-		<dependency>
-			<groupId>cglib</groupId>
-			<artifactId>cglib-nodep</artifactId>
-			<version>3.1</version>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>com.thoughtworks.proxytoys</groupId>
-			<artifactId>proxytoys</artifactId>
-			<version>1.0</version>
-			<type>jar</type>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.google.guava</groupId>
