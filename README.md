@@ -18,12 +18,12 @@ Setup
         <version>x.x.x</version>
     </dependency>
 
-2) Configure the mongodb connection in your ninja application.conf (values are the default values used by this module)
-
-	ninjamorhia.mongodb.host=127.0.0.1
-	ninjamorhia.mongodb.port=27017
-	ninjamorhia.mongodb.name=ninjamorphia
-	ninjamorhia.models.package=models
+2) Configure the mongodb connection in your ninja application.conf (values show are the default values used by this module if no properties are provided)
+	
+	ninjamorphia.mongodb.host=127.0.0.1
+	ninjamorphia.mongodb.port=27017
+	ninjamorphia.mongodb.name=ninjamorphia
+	ninjamorphia.models.package=models
 
 3) Install the module in your ninja framework conf/Module file:
 
