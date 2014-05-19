@@ -23,10 +23,14 @@ import com.mongodb.MongoClient;
 @Singleton
 public class NinjaMorphia {
     private Datastore datastore;
-    private final static String MONGODB_HOST = "ninjamorphia.mongodb.host";
-    private final static String MONGODB_PORT = "ninjamorphia.mongodb.port";
-    private final static String MONGODB_NAME = "ninjamorphia.mongodb.name";
-    private final static String MORPHIA_PACKAGE_NAME = "ninjamorphia.models.package";
+    private static final String MONGODB_HOST = "ninjamorphia.mongodb.host";
+    private static final String MONGODB_PORT = "ninjamorphia.mongodb.port";
+    private static final String MONGODB_NAME = "ninjamorphia.mongodb.name";
+    private static final String MORPHIA_PACKAGE_NAME = "ninjamorphia.models.package";
+    private static final String MONGODB_DEFAULT_HOST = "127.0.0.1";
+    private static final String MORPHIA_DEFAULT_PAKCGAE_NAME = "models";
+    private static final String MONGODB_DEFAULT_NAME = "ninjamorphia";
+    private static final int MONGODB_DEFAULT_PORT = 27107;
     private final NinjaProperties ninjaProperties;
     private final Logger logger;
     
@@ -37,8 +41,8 @@ public class NinjaMorphia {
         
         MongoClient mongoClient = null;
         try {
-            final String mongoDbHost = this.ninjaProperties.getWithDefault(MONGODB_HOST, "127.0.0.1");
-            final int mongoDbPort = this.ninjaProperties.getIntegerWithDefault(MONGODB_PORT, 27107);
+            final String mongoDbHost = this.ninjaProperties.getWithDefault(MONGODB_HOST, MONGODB_DEFAULT_HOST);
+            final int mongoDbPort = this.ninjaProperties.getIntegerWithDefault(MONGODB_PORT, MONGODB_DEFAULT_PORT);
             
             mongoClient = new MongoClient(mongoDbHost, mongoDbPort);
         } catch (UnknownHostException e) {
@@ -46,8 +50,8 @@ public class NinjaMorphia {
         }
         
         if (mongoClient != null) {
-            final String mongoDbName = this.ninjaProperties.getWithDefault(MONGODB_NAME, "ninjamorphia");
-            final String morphiaPackage = this.ninjaProperties.getWithDefault(MORPHIA_PACKAGE_NAME, "models");
+            final String mongoDbName = this.ninjaProperties.getWithDefault(MONGODB_NAME, MONGODB_DEFAULT_NAME);
+            final String morphiaPackage = this.ninjaProperties.getWithDefault(MORPHIA_PACKAGE_NAME, MORPHIA_DEFAULT_PAKCGAE_NAME);
             
             this.datastore = new Morphia().mapPackage(morphiaPackage).createDatastore(mongoClient, mongoDbName);
             this.logger.info("Created datastore for MongoDB: " + mongoDbName);
@@ -75,21 +79,6 @@ public class NinjaMorphia {
         Preconditions.checkNotNull(mongoClient);
         
         this.datastore = new Morphia().mapPackage(MORPHIA_PACKAGE_NAME).createDatastore(mongoClient, MONGODB_NAME);
-    }
-    
-    /**
-     * @deprecated Replaced by {@link #findById(Class<T> clazz, Object id)}
-     */
-    public <T extends Object> T findByObjectId(Class<T> clazz, Object id) {
-        Preconditions.checkNotNull(clazz);
-        Preconditions.checkNotNull(id);
-
-        String objectId = null;
-        if (!(id instanceof ObjectId)) {
-            objectId = String.valueOf(id);
-        }
-        
-        return this.datastore.get(clazz, new ObjectId(objectId));  
     }
     
     /**
@@ -172,7 +161,7 @@ public class NinjaMorphia {
      * Drops all data in mognodb on the configured database in 
      * ninja framework application.conf
      */
-    public void dropdatabase() {
+    public void dropDatabase() {
         this.datastore.getDB().dropDatabase();
     }
 }

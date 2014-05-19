@@ -2,7 +2,7 @@ Morphia module for Ninja framework.
 =====================
 Morphia is a lightweight type-safe library for mapping Java objects to/from MongoDB.
 
-This is an easly plugable module for the Ninja web framework to work with morphia and mongodb by providing a convinent service, providing you with all dependencies and some testing resources.
+This is an easly plugable module for the Ninja web framework to work with morphia and mongodb by providing a convinent service, providing you with all required dependencies.
 
 Getting started
 ---------------
