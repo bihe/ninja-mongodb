@@ -37,7 +37,7 @@ Setup
 	ninjamorhia.mongodb.name=ninjamorphia
 	ninjamorhia.models.package=models
 
-Please note that you still have to annotate your model classes with morphia annotations accordingly.
+Please note that you still have to annotate your model classes with morphia annotations!
 
 Optional
 -----
