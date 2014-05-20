@@ -10,7 +10,7 @@ Setup
 1) Add the ninja-morphia dependency to your pom.xml:
 
     <dependency>
-        <groupId>org.ninjaframework</groupId>
+        <groupId>de.svenkubiak.ninjaframework</groupId>
         <artifactId>ninja-morphia-module</artifactId>
         <version>x.x.x</version>
     </dependency>
