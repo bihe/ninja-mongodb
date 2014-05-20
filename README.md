@@ -1,8 +1,8 @@
 Morphia module for Ninja framework.
 =====================
-Morphia is a lightweight type-safe library for mapping Java objects to/from MongoDB.
+[Morphia][1] is a lightweight type-safe library for mapping Java objects to/from [MongoDB][2].
 
-This is an easly plugable module for the Ninja web framework to work with morphia and mongodb by providing a convinent service, providing you with all required dependencies.
+This is an easily plugable module for the Ninja web framework to work with morphia and mongodb by providing a convinient service and providing you with all required dependencies.
 
 Getting started
 ---------------
@@ -25,19 +25,12 @@ Setup
 	ninjamorphia.mongodb.name=ninjamorphia
 	ninjamorphia.models.package=models
 
-3) Install the module in your ninja framework conf/Module file:
-
-    @Override
-    protected void configure() {
-        install(new NinjaMorphiaModule());
-    }
-
-4) Inject the ninja-morphia service where needed
+3) Inject the ninja-morphia service where needed
 
 	@Inject
 	private NinjaMorphia ninjaMorphia
 
-Please note that you still have to annotate your model classes with morphia annotations!
+Please note that you still have to annotate your model classes with [morphia annotations][3]!
 
 Optional
 -----
@@ -46,3 +39,8 @@ The ninja-morphia-module provides a superclass with a ObjectId member variable a
 
 	@Entity
 	public class MyEntity extends NinjaMorphiaModel
+
+
+  [1]: https://github.com/mongodb/morphia
+  [2]: http://www.mongodb.org/
+  [3]: https://github.com/mongodb/morphia/wiki/GettingStarted
