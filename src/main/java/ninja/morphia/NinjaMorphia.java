@@ -78,7 +78,10 @@ public class NinjaMorphia {
     public void setMongoClient(MongoClient mongoClient) {
         Preconditions.checkNotNull(mongoClient);
         
-        this.datastore = new Morphia().mapPackage(MORPHIA_PACKAGE_NAME).createDatastore(mongoClient, MONGODB_NAME);
+        final String mongoDbName = this.ninjaProperties.getWithDefault(MONGODB_NAME, MONGODB_DEFAULT_NAME);
+        final String morphiaPackage = this.ninjaProperties.getWithDefault(MORPHIA_PACKAGE_NAME, MORPHIA_DEFAULT_PACKAGE_NAME);
+        
+        this.datastore = new Morphia().mapPackage(morphiaPackage).createDatastore(mongoClient, mongoDbName);
     }
     
     /**
