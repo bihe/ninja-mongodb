@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.svenkubiak</groupId>
-	<artifactId>ninja-morphia-module</artifactId>
+	<artifactId>ninja-mongodb-module</artifactId>
 	<version>1.1.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-	<name>Ninja Framework Morphia Module</name>
-	<description>This is an easly plugable module for the Ninja web framework to work with morphia and mongodb by providing a convinent service, providing you with all dependencies and some testing utilites.</description>
+	<name>Ninja Framework MongoDB Module</name>
+	<description>This is an easly plugable module for the Ninja web framework to work with MongoDB and optional moprhia (a MongoDB ORM) by providing convinent services, all required dependencies and some testing utilities.</description>
 	<url>https://github.com/svenkubiak/ninja-morphia</url>
 	<licenses>
 		<license>
@@ -114,7 +114,7 @@
 		<dependency>
 			<groupId>org.mongodb</groupId>
 			<artifactId>mongo-java-driver</artifactId>
-			<version>2.12.1</version>
+			<version>2.12.2</version>
 		</dependency>
 	</dependencies>
 	<distributionManagement>
