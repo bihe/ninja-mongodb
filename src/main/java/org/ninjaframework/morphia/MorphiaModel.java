@@ -1,4 +1,4 @@
-package ninja.morphia;
+package org.ninjaframework.morphia;
 
 import java.io.Serializable;
 
@@ -7,10 +7,10 @@ import org.mongodb.morphia.annotations.Id;
 
 /**
  * Superclass for mapping mongodb morphia models
- * @author svenkubiak
+ * @author bihe (original author: skubiak)
  *
  */
-public class NinjaMorphiaModel implements Serializable {
+public class MorphiaModel implements Serializable {
     private static final long serialVersionUID = -3141621127850129919L;
 
     @Id

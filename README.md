@@ -4,38 +4,67 @@ This is an easly plugable module for the Ninja web framework to work with MongoD
 
 [Morphia][1] is a lightweight type-safe library for mapping Java objects to/from [MongoDB][2].
 
+__IMPORTANT!__ Version 1.x.x uses MongoDB Java-Driver 2.x and default Mongo Credentials Authentication Version 2.x.x/3.x.x uses MongoDB Java-Driver 3.x and SCRAM-SHA-1 Authentication
+
+This is a recreation of the module of [Sven Kubiak (svenkubiak)]( https://github.com/svenkubiak). Unfortunately the github repository was deleted.
+
+
 Setup
 -----
 
 1) Add the ninja-mongodb dependency to your pom.xml:
 
     <dependency>
-        <groupId>de.svenkubiak</groupId>
+        <groupId>org.ninjaframework</groupId>
         <artifactId>ninja-mongodb-module</artifactId>
         <version>x.x.x</version>
     </dependency>
 
 2) Configure the mongodb connection in your ninja application.conf (values show are the default values used by this module if no properties are provided)
 	
-	ninjamorphia.mongodb.host=127.0.0.1
-	ninjamorphia.mongodb.port=27017
-	ninjamorphia.mongodb.name=ninjamorphia
-	ninjamorphia.models.package=models
+	ninja.mongodb.host=         //The address of your mongodb, default: localhost
+	ninja.mongodb.port=         //The port of you mongodb, default: 27017
+	ninja.mongodb.dbname=       //The name of the database, default: MyMongoDB
+	ninja.mongodb.user=         //The username for authentication, no default value
+	ninja.mongodb.pass=         //The password for authentication, no default value
+	ninja.mongodb.authdb=       //The db where the user is identified, default: MyMongoDB
+	ninja.morphia.package=      //The package name of you morphia models, default: models
+	ninja.morphia.init=         //Whether to init morphia by default, default: false
+
+ninja.morphia.package, ninja.mongodb.user and ninja.mongodb.pass are optional
 
 3) Inject the ninja-morphia service where needed
 
 	@Inject
-	private NinjaMorphia ninjaMorphia
+	private MyDataService(MongoDB mongoDB) {
+		this.mongoDB = mongoDB;
+	}
 
-Please note that you still have to annotate your model classes with [morphia annotations][3]!
+4) The MongoDB instance handles the connection and gives you the MongoClient to interact with MognoDB
 
-Optional
------
+	this.mongoDB.getMongoClient()
+	
+If you want to use Morphia, you can get the Morphia instance or the Morphia Datastore
 
+	this.mongoDB.getMorphia()
+	this.mongoDB.getDatastore()
+	
+The MongoDB instance also has some convenient methods for interacting with Morphia
+	
+	public abstract <T extends Object> T findById(Object id, Class<T> clazz);
+	public abstract <T extends Object> List<T> findAll(Class<T> clazz);
+	public abstract <T extends Object> long countAll(Class<T> clazz);
+	public abstract void save(Object object);
+	public abstract void delete(Object object);
+	public abstract <T extends Object> void deleteAll(Class<T> clazz);
+	public abstract void dropDatabase();
+	
 The ninja-morphia-module provides a superclass with a ObjectId member variable and an appropriate getter method. You may extend your model classes if you want to.
 
 	@Entity
-	public class MyEntity extends NinjaMorphiaModel
+	public class MyEntity extends MorphiaModel
+
+Please note that you still have to annotate your model classes with [morphia annotations][3]!
 
 
   [1]: https://github.com/mongodb/morphia
