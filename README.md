@@ -4,8 +4,6 @@ This is an easly plugable module for the Ninja web framework to work with MongoD
 
 [Morphia][1] is a lightweight type-safe library for mapping Java objects to/from [MongoDB][2].
 
-__IMPORTANT!__ Version 1.x.x uses MongoDB Java-Driver 2.x and default Mongo Credentials Authentication Version 2.x.x/3.x.x uses MongoDB Java-Driver 3.x and SCRAM-SHA-1 Authentication
-
 This is a recreation of the module of [Sven Kubiak (svenkubiak)]( https://github.com/svenkubiak). Unfortunately the github repository was deleted.
 
 
