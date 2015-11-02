@@ -7,6 +7,8 @@ This is an easly plugable module for the Ninja web framework to work with MongoD
 This is a recreation of the module of [Sven Kubiak (svenkubiak)]( https://github.com/svenkubiak). Unfortunately the github repository was deleted.
 
 
+[![Build Status](https://travis-ci.org/bihe/ninja-mongodb.png)](https://travis-ci.org/bihe/ninja-mongodb)
+
 Setup
 -----
 
