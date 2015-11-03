@@ -1,4 +1,4 @@
-package org.ninjaframework.morphia;
+package net.binggl.ninja.mongodb;
 
 import java.util.Arrays;
 import java.util.List;

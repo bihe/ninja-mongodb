@@ -1,4 +1,4 @@
-package org.ninjaframework.morphia;
+package net.binggl.ninja.tests;
 
 import static org.junit.Assert.*;
 
@@ -6,12 +6,12 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.ninjaframework.morphia.MongoDB;
 
 import com.google.inject.Inject;
 
 import de.svenkubiak.embeddedmongodb.EmbeddedMongo;
 import models.TestModel;
+import net.binggl.ninja.mongodb.MongoDB;
 import ninja.NinjaTest;
 
 public class TestMorphiaModule extends NinjaTest {
