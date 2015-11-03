@@ -57,7 +57,7 @@ public class MongoDB {
         }
     }
     
-     public Datastore getDatastore() {
+    public Datastore getDatastore() {
         return this.datastore;
     }
 
@@ -109,6 +109,7 @@ public class MongoDB {
      * type ObjectId, it will we converted to ObjectId
      * 
      * @param id The id of the object
+     * @param <T> generic type
      * @param clazz The mapped Morphia class
      * 
      * @return The reqeusted class from MongoDb or null if none found
@@ -123,6 +124,7 @@ public class MongoDB {
     /**
      * Retrieves a list of mapped Morphia objects from MongoDB
      *
+     * @param <T> generic type
      * @param clazz The mapped Morphia class
      * @return A list of mapped Morphia objects or an empty list if none found
      */
@@ -135,6 +137,7 @@ public class MongoDB {
     /**
      * Counts all objected of a mapped Morphia class
      *
+     * @param <T> generic type
      * @param clazz The mapped Morphia class
      * @return The number of objects in MongoDB
      */
@@ -169,6 +172,7 @@ public class MongoDB {
     /**
      * Deletes all mapped Morphia objects of a given class
      *
+     * @param <T> generic type
      * @param clazz The mapped Morphia class
      */
     public <T extends Object> void deleteAll(Class<T> clazz) {
