@@ -1,6 +1,10 @@
 package net.binggl.ninja.tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.io.IOException;
+import java.net.UnknownHostException;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -9,7 +13,13 @@ import org.junit.Test;
 
 import com.google.inject.Inject;
 
-import de.svenkubiak.embeddedmongodb.EmbeddedMongo;
+import de.flapdoodle.embed.mongo.MongodExecutable;
+import de.flapdoodle.embed.mongo.MongodProcess;
+import de.flapdoodle.embed.mongo.MongodStarter;
+import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
+import de.flapdoodle.embed.mongo.config.Net;
+import de.flapdoodle.embed.mongo.distribution.Version;
+import de.flapdoodle.embed.process.runtime.Network;
 import models.TestModel;
 import net.binggl.ninja.mongodb.MongoDB;
 import ninja.NinjaTest;
@@ -17,15 +27,23 @@ import ninja.NinjaTest;
 public class TestMorphiaModule extends NinjaTest {
     
 	@Inject private static MongoDB mongoDB;
-
+	private static final MongodStarter starter = MongodStarter.getDefaultInstance();
+	private static MongodExecutable mongodExe;
+	private static MongodProcess mongod;
+	
     @BeforeClass
-    public static void init() {
-        EmbeddedMongo.DB.port(29019).start();
+    public static void init() throws UnknownHostException, IOException {
+        mongodExe = starter.prepare(new MongodConfigBuilder()
+                .version(Version.Main.PRODUCTION)
+                .net(new Net(29019, Network.localhostIsIPv6()))
+                .build());
+        mongod = mongodExe.start();
     }
     
     @AfterClass
     public static void shutdown() {
-        EmbeddedMongo.DB.stop();
+    	mongod.stop();
+        mongodExe.stop();
     }
     
     @Before
