@@ -1,6 +1,6 @@
 MongoDB module for Ninja framework
 =====================
-This is an easly plugable module for the Ninja web framework to work with MongoDB and optional moprhia (a MongoDB ORM) by providing convinent services, all required dependencies and some testing utilities.
+This is an easly plugable module for the [Ninja web framework](http://www.ninjaframework.org/) to work with MongoDB and optional moprhia (a MongoDB ORM) by providing convinent services, all required dependencies and some testing utilities.
 
 [Morphia][1] is a lightweight type-safe library for mapping Java objects to/from [MongoDB][2].
 
