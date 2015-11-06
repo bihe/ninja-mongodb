@@ -14,11 +14,11 @@ Setup
 
 1) Add the ninja-mongodb dependency to your pom.xml:
 
-    <dependency>
-        <groupId>org.ninjaframework</groupId>
-        <artifactId>ninja-mongodb-module</artifactId>
-        <version>x.x.x</version>
-    </dependency>
+	<dependency>
+	    <groupId>net.binggl</groupId>
+	    <artifactId>ninja-mongodb-module</artifactId>
+	    <version>1.0.0</version>
+	</dependency>
 
 2) Configure the mongodb connection in your ninja application.conf (values show are the default values used by this module if no properties are provided)
 	
@@ -37,7 +37,7 @@ ninja.morphia.package, ninja.mongodb.user and ninja.mongodb.pass are optional
 
 	@Inject
 	private MyDataService(MongoDB mongoDB) {
-		this.mongoDB = mongoDB;
+	    this.mongoDB = mongoDB;
 	}
 
 4) The MongoDB instance handles the connection and gives you the MongoClient to interact with MognoDB
