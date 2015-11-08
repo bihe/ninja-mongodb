@@ -25,10 +25,12 @@ Setup
 	ninja.mongodb.host=localhost
 	ninja.mongodb.port=27017
 	ninja.mongodb.dbname=MyMongoDB
-	ninja.mongodb.user=  // if mechanism is MONGO-X509: The x.509 certificate derived user name, e.g. "CN=user,OU=OrgUnit,O=myOrg,..."
+	# if mechanism is MONGO-X509: The x.509 certificate derived user name, e.g. "CN=user,OU=OrgUnit,O=myOrg,..."
+	ninja.mongodb.user=  
 	ninja.mongodb.pass=
-	ninja.mongodb.authMechanism=SCRAM-SHA-1 // possible values: SCRAM-SHA-1 (default)|MONGODB-CR|MONGO-X509
-	ninja.mongodb.authdb=admin
+	# possible values: SCRAM-SHA-1 (default)|MONGODB-CR|MONGO-X509
+	ninja.mongodb.authMechanism=SCRAM-SHA-1
+	ninja.mongodb.authdb=MyMongoDB
 	ninja.morphia.package=models
 	ninja.morphia.init=true
 	

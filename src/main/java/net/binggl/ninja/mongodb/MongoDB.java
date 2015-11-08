@@ -32,7 +32,6 @@ public class MongoDB {
     private static final String DEFAULT_MORPHIA_PACKAGE = "models";
     private static final String DEFAULT_MONGODB_NAME = "MyMongoDb";
     private static final String DEFAULT_MONGODB_HOST = "localhost";
-    private static final String DEFAULT_MONGODB_AUTHDB = "admin";
     private static final String DEFAULT_AUTH_MECHANISM = "SCRAM-SHA-1";
     
     private static final String MONGODB_HOST = "ninja.mongodb.host";
@@ -79,7 +78,7 @@ public class MongoDB {
         
         String username = this.ninjaProperties.getWithDefault(MONGODB_USER, null);
         String password = this.ninjaProperties.getWithDefault(MONGODB_PASS, null);
-        String authdb = this.ninjaProperties.getWithDefault(MONGODB_AUTHDB, DEFAULT_MONGODB_AUTHDB);
+        String authdb = this.ninjaProperties.getWithDefault(MONGODB_AUTHDB, DEFAULT_MONGODB_NAME);
         
         MongoAuthMechanism mechanism = MongoAuthMechanism.SCRAM_SHA_1;
         if (StringUtils.isNotBlank(username)) {

@@ -11,13 +11,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.google.inject.Inject;
-
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;
 import de.flapdoodle.embed.mongo.config.IMongodConfig;
-import de.flapdoodle.embed.mongo.config.MongoCmdOptionsBuilder;
 import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
@@ -28,7 +25,7 @@ import ninja.NinjaTest;
 
 public class TestMorphiaModule extends NinjaTest {
     
-	@Inject private static MongoDB mongoDB;
+	private static MongoDB mongoDB;
 	private static final MongodStarter starter = MongodStarter.getDefaultInstance();
 	private static MongodExecutable mongodExe;
 	private static MongodProcess mongod;
@@ -39,9 +36,6 @@ public class TestMorphiaModule extends NinjaTest {
     	IMongodConfig mongodConfig = new MongodConfigBuilder()
     	        .version(Version.Main.PRODUCTION)
     	        .net(new Net(29019, Network.localhostIsIPv6()))
-    	        .cmdOptions(new MongoCmdOptionsBuilder()
-        				.enableAuth(true)
-        				.build())
     	        .build();
     	
         mongodExe = starter.prepare(mongodConfig);
