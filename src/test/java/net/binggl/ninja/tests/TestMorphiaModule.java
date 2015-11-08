@@ -16,6 +16,8 @@ import com.google.inject.Inject;
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;
+import de.flapdoodle.embed.mongo.config.IMongodConfig;
+import de.flapdoodle.embed.mongo.config.MongoCmdOptionsBuilder;
 import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
@@ -33,10 +35,16 @@ public class TestMorphiaModule extends NinjaTest {
 	
     @BeforeClass
     public static void init() throws UnknownHostException, IOException {
-        mongodExe = starter.prepare(new MongodConfigBuilder()
-                .version(Version.Main.PRODUCTION)
-                .net(new Net(29019, Network.localhostIsIPv6()))
-                .build());
+    	
+    	IMongodConfig mongodConfig = new MongodConfigBuilder()
+    	        .version(Version.Main.PRODUCTION)
+    	        .net(new Net(29019, Network.localhostIsIPv6()))
+    	        .cmdOptions(new MongoCmdOptionsBuilder()
+        				.enableAuth(true)
+        				.build())
+    	        .build();
+    	
+        mongodExe = starter.prepare(mongodConfig);
         mongod = mongodExe.start();
     }
     

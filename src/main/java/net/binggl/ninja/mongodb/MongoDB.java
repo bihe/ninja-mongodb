@@ -23,7 +23,6 @@ import ninja.utils.NinjaProperties;
 /**
  * Convinent service class for interacting with MongoDb over Morphia
  * @author bihe (original author: skubiak)
- *
  */
 @Singleton
 public class MongoDB {
@@ -33,14 +32,19 @@ public class MongoDB {
     private static final String DEFAULT_MORPHIA_PACKAGE = "models";
     private static final String DEFAULT_MONGODB_NAME = "MyMongoDb";
     private static final String DEFAULT_MONGODB_HOST = "localhost";
+    private static final String DEFAULT_MONGODB_AUTHDB = "admin";
+    private static final String DEFAULT_AUTH_MECHANISM = "SCRAM-SHA-1";
+    
     private static final String MONGODB_HOST = "ninja.mongodb.host";
     private static final String MONGODB_PORT = "ninja.mongodb.port";
     private static final String MONGODB_USER = "ninja.mongodb.user";
     private static final String MONGODB_PASS = "ninja.mongodb.pass";
+    private static final String MONGODB_AUTH_MECHANISM = "ninja.mongodb.authMechanism";
     private static final String MONGODB_DBNAME = "ninja.mongodb.dbname";
     private static final String MONGODB_AUTHDB = "ninja.mongodb.authdb";
     private static final String MORPHIA_PACKAGE = "ninja.morphia.package";
     private static final String MORPHIA_INIT = "ninja.morphia.init";
+    
     private Datastore datastore;
     private Morphia Morphia;
     private MongoClient mongoClient;
@@ -52,7 +56,7 @@ public class MongoDB {
         this.ninjaProperties = ninjaProperties;
         
         this.connect();
-        if (this.ninjaProperties.getBooleanWithDefault(MORPHIA_INIT, false)) {
+        if (this.ninjaProperties.getBooleanWithDefault(MORPHIA_INIT, true)) {
             this.morphify();
         }
     }
@@ -69,21 +73,65 @@ public class MongoDB {
         return this.mongoClient;
     }
 	
-	private void connect() {
-        String string = this.ninjaProperties.getWithDefault(MONGODB_HOST, DEFAULT_MONGODB_HOST);
-        int n = this.ninjaProperties.getIntegerWithDefault(MONGODB_PORT, DEFAULT_MONGODB_PORT);
+    private void connect() {
+        String host = this.ninjaProperties.getWithDefault(MONGODB_HOST, DEFAULT_MONGODB_HOST);
+        int port = this.ninjaProperties.getIntegerWithDefault(MONGODB_PORT, DEFAULT_MONGODB_PORT);
+        
         String username = this.ninjaProperties.getWithDefault(MONGODB_USER, null);
         String password = this.ninjaProperties.getWithDefault(MONGODB_PASS, null);
-        String authdb = this.ninjaProperties.get(MONGODB_AUTHDB);
+        String authdb = this.ninjaProperties.getWithDefault(MONGODB_AUTHDB, DEFAULT_MONGODB_AUTHDB);
         
-		if (StringUtils.isNotBlank((CharSequence)username) && StringUtils.isNotBlank((CharSequence)password) && StringUtils.isNotBlank((CharSequence)authdb)) {
-            this.mongoClient = new MongoClient(new ServerAddress(string, n), Arrays.asList(new MongoCredential[]{MongoCredential.createScramSha1Credential((String)username, (String)authdb, (char[])password.toCharArray())}));
-            LOG.info("Successfully created MongoClient @ {}:{} with authentication {}/*******", new Object[]{string, n, username});
+        MongoAuthMechanism mechanism = MongoAuthMechanism.SCRAM_SHA_1;
+        if (StringUtils.isNotBlank(username)) {
+        	mechanism = MongoAuthMechanism.fromString(
+        			this.ninjaProperties.getWithDefault(MONGODB_AUTH_MECHANISM, DEFAULT_AUTH_MECHANISM));
+
+        	if(mechanism == MongoAuthMechanism.MONGO_X509) {
+        		LOG.info("Will use MONGO-X509 mechanism to authenticate user.");
+        		this.mongoClient = this.createClient(mechanism, host, port, username, password, authdb);
+                LOG.info("Successfully created MongoClient @ {}:{} with authentication {}/*******", new Object[]{host, port, username});
+        	} else {
+        		if (StringUtils.isBlank(password) || 
+                        StringUtils.isBlank(authdb)) {
+        			throw new IllegalArgumentException("The parameters authdb and password cannot be blank!");
+        		}
+        		this.mongoClient = this.createClient(mechanism, host, port, username, password, authdb);
+                LOG.info("Successfully created MongoClient @ {}:{} with authentication {}/*******", new Object[]{host, port, username});
+        	}
         } else {
-            this.mongoClient = new MongoClient(string, n);
-            LOG.info("Successfully created MongoClient @ {}:{}", (Object)string, (Object)n);
+            this.mongoClient = new MongoClient(host, port);
+            LOG.info("Successfully created MongoClient @ {}:{}", host, port);
         }
     }
+    
+    private MongoClient createClient(MongoAuthMechanism mechanism, String host, int port, String username, String password, String authdb) {
+    	MongoClient client = null;
+    	MongoCredential credential = null;
+    	
+    	switch(mechanism) {
+    		case SCRAM_SHA_1: 
+    			credential = MongoCredential.createScramSha1Credential(
+	                    username, 
+	                    authdb, 
+	                    password.toCharArray());
+    			break;
+    		case MONGODB_CR: 
+    			credential = MongoCredential.createMongoCRCredential(
+	                    username, 
+	                    authdb, 
+	                    password.toCharArray());
+    			break;
+    		case MONGO_X509: 
+    			credential = MongoCredential.createMongoX509Credential(username);
+    			break;
+    	}
+    	
+    	client = new MongoClient(new ServerAddress(host, port), 
+                Arrays.asList(new MongoCredential[]{ credential })
+			);
+    	return client;
+    }
+    
 
     private void morphify() {
         String packageName = this.ninjaProperties.getWithDefault(MORPHIA_PACKAGE, DEFAULT_MORPHIA_PACKAGE);

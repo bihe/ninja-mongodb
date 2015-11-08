@@ -22,15 +22,16 @@ Setup
 
 2) Configure the mongodb connection in your ninja application.conf (values show are the default values used by this module if no properties are provided)
 	
-	ninja.mongodb.host=         //The address of your mongodb, default: localhost
-	ninja.mongodb.port=         //The port of you mongodb, default: 27017
-	ninja.mongodb.dbname=       //The name of the database, default: MyMongoDB
-	ninja.mongodb.user=         //The username for authentication, no default value
-	ninja.mongodb.pass=         //The password for authentication, no default value
-	ninja.mongodb.authdb=       //The db where the user is identified, default: MyMongoDB
-	ninja.morphia.package=      //The package name of you morphia models, default: models
-	ninja.morphia.init=         //Whether to init morphia by default, default: false
-
+	ninja.mongodb.host=localhost
+	ninja.mongodb.port=27017
+	ninja.mongodb.dbname=MyMongoDB
+	ninja.mongodb.user=  // if mechanism is MONGO-X509: The x.509 certificate derived user name, e.g. "CN=user,OU=OrgUnit,O=myOrg,..."
+	ninja.mongodb.pass=
+	ninja.mongodb.authMechanism=SCRAM-SHA-1 // possible values: SCRAM-SHA-1 (default)|MONGODB-CR|MONGO-X509
+	ninja.mongodb.authdb=admin
+	ninja.morphia.package=models
+	ninja.morphia.init=true
+	
 ninja.morphia.package, ninja.mongodb.user and ninja.mongodb.pass are optional
 
 3) Inject the ninja-morphia service where needed
