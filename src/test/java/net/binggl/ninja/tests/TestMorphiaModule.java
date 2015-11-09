@@ -25,33 +25,41 @@ import ninja.NinjaTest;
 
 public class TestMorphiaModule extends NinjaTest {
     
+	private static final boolean EMBEDDED_MONGO = true;
+		
 	private static MongoDB mongoDB;
 	private static final MongodStarter starter = MongodStarter.getDefaultInstance();
 	private static MongodExecutable mongodExe;
 	private static MongodProcess mongod;
+		
 	
     @BeforeClass
     public static void init() throws UnknownHostException, IOException {
     	
-    	IMongodConfig mongodConfig = new MongodConfigBuilder()
-    	        .version(Version.Main.PRODUCTION)
-    	        .net(new Net(29019, Network.localhostIsIPv6()))
-    	        .build();
-    	
-        mongodExe = starter.prepare(mongodConfig);
-        mongod = mongodExe.start();
+    	if(EMBEDDED_MONGO) {
+	    	IMongodConfig mongodConfig = new MongodConfigBuilder()
+	    	        .version(Version.Main.PRODUCTION)
+	    	        .net(new Net(29019, Network.localhostIsIPv6()))
+	    	        .build();
+	    	
+	        mongodExe = starter.prepare(mongodConfig);
+	        mongod = mongodExe.start();
+    	}
     }
     
     @AfterClass
     public static void shutdown() {
-    	mongod.stop();
-        mongodExe.stop();
+    	if(EMBEDDED_MONGO) {
+    		mongod.stop();
+            mongodExe.stop();	
+    	}
     }
     
     @Before
     public void setup() throws Exception{
     	mongoDB = getInjector().getInstance(MongoDB.class);
-    	mongoDB.dropDatabase();
+    	mongoDB.deleteAll(TestModel.class);
+    	//mongoDB.dropDatabase();
     }
 
     @Test
