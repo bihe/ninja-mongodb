@@ -8,6 +8,7 @@ This is a recreation of the module of [Sven Kubiak (svenkubiak)]( https://github
 
 
 [![Build Status](https://travis-ci.org/bihe/ninja-mongodb.png)](https://travis-ci.org/bihe/ninja-mongodb)
+[![license](http://img.shields.io/badge/license-apache_2.0-red.svg?style=flat)](https://raw.githubusercontent.com/bihe/ninja-mongodb/master/LICENSE)
 
 Setup
 -----
