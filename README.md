@@ -18,7 +18,7 @@ Setup
 	<dependency>
 	    <groupId>net.binggl</groupId>
 	    <artifactId>ninja-mongodb-module</artifactId>
-	    <version>1.0.1</version>
+	    <version>1.0.2</version>
 	</dependency>
 
 2) Configure the mongodb connection in your ninja application.conf (values show are the default values used by this module if no properties are provided)
