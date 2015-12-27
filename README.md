@@ -18,7 +18,7 @@ Setup
 	<dependency>
 	    <groupId>net.binggl</groupId>
 	    <artifactId>ninja-mongodb-module</artifactId>
-	    <version>1.0.2</version>
+	    <version>1.0.3</version>
 	</dependency>
 
 2) Configure the mongodb connection in your ninja application.conf (values show are the default values used by this module if no properties are provided)
@@ -32,10 +32,21 @@ Setup
 	# possible values: SCRAM-SHA-1 (default)|MONGODB-CR|MONGO-X509
 	ninja.mongodb.authMechanism=SCRAM-SHA-1
 	ninja.mongodb.authdb=MyMongoDB
+	ninja.mongodb.connectonstart=true
 	ninja.morphia.package=models
 	ninja.morphia.init=true
 	
-ninja.morphia.package, ninja.mongodb.user and ninja.mongodb.pass are optional
+ninja.morphia.package, ninja.mongodb.user and ninja.mongodb.pass are optional.
+
+If connectonstart is set to 'false' the connection can be later initiated by invoking the 'connect' method.
+
+    mongoDB.connect();
+	
+The same approach is possible to initiate the morphia module. This is done automatically, or can be controlled individually.
+
+    mongoDB.initMorphia();
+
+If ninja.mongodb.connectonstart is 'false' and ninja.morphia.init is 'true' no init is done - because a connection is needed!
 
 3) Inject the ninja-morphia service where needed
 

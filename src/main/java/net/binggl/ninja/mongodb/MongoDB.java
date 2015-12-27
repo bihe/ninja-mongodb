@@ -41,12 +41,13 @@ public class MongoDB {
     private static final String MONGODB_AUTH_MECHANISM = "ninja.mongodb.authMechanism";
     private static final String MONGODB_DBNAME = "ninja.mongodb.dbname";
     private static final String MONGODB_AUTHDB = "ninja.mongodb.authdb";
+    private static final String MONGODB_CONNECT_ON_STARTUP = "ninja.mongodb.connectonstart";
     private static final String MORPHIA_PACKAGE = "ninja.morphia.package";
     private static final String MORPHIA_INIT = "ninja.morphia.init";
     
     private Datastore datastore;
-    private Morphia Morphia;
-    private MongoClient mongoClient;
+    private Morphia morphia;
+    private MongoClient mongoClient = null;
     private NinjaProperties ninjaProperties;
 
     
@@ -54,9 +55,14 @@ public class MongoDB {
     public MongoDB(NinjaProperties ninjaProperties) {
         this.ninjaProperties = ninjaProperties;
         
-        this.connect();
-        if (this.ninjaProperties.getBooleanWithDefault(MORPHIA_INIT, true)) {
-            this.morphify();
+        if (this.ninjaProperties.getBooleanWithDefault(MONGODB_CONNECT_ON_STARTUP, true)) {
+        	this.connect();
+        }
+        
+        // init morphia is only possible if connect on startup is true
+        if (this.ninjaProperties.getBooleanWithDefault(MONGODB_CONNECT_ON_STARTUP, true)
+        		&& this.ninjaProperties.getBooleanWithDefault(MORPHIA_INIT, true)) {
+            this.initMorphia();
         }
     }
     
@@ -65,14 +71,14 @@ public class MongoDB {
     }
 
     public Morphia getMorphia() {
-        return this.Morphia;
+        return this.morphia;
     }
 
     public MongoClient getMongoClient() {
         return this.mongoClient;
     }
 	
-    private void connect() {
+    public void connect() {
         String host = this.ninjaProperties.getWithDefault(MONGODB_HOST, DEFAULT_MONGODB_HOST);
         int port = this.ninjaProperties.getIntegerWithDefault(MONGODB_PORT, DEFAULT_MONGODB_PORT);
         
@@ -103,6 +109,23 @@ public class MongoDB {
         }
     }
     
+    public void disconnect() {
+    	Preconditions.checkNotNull(this.mongoClient, "MongoClient was not initialized!");
+    	this.mongoClient.close();
+    }
+    
+    public void initMorphia() {
+    	Preconditions.checkNotNull(this.mongoClient, "MongoClient was not initialized!");
+    	
+        String packageName = this.ninjaProperties.getWithDefault(MORPHIA_PACKAGE, DEFAULT_MORPHIA_PACKAGE);
+        String dbName = this.ninjaProperties.getWithDefault(MONGODB_DBNAME, DEFAULT_MONGODB_NAME);
+        
+        this.morphia = new Morphia().mapPackage(packageName);
+        this.datastore = this.morphia.createDatastore(this.mongoClient, dbName);
+        
+        LOG.info("Mapped Morphia models of package '" + packageName + "' and created Morphia Datastore to database '" + dbName + "'");
+    }
+    
     private MongoClient createClient(MongoAuthMechanism mechanism, String host, int port, String username, String password, String authdb) {
     	MongoClient client = null;
     	MongoCredential credential = null;
@@ -131,17 +154,6 @@ public class MongoDB {
     	return client;
     }
     
-
-    private void morphify() {
-        String packageName = this.ninjaProperties.getWithDefault(MORPHIA_PACKAGE, DEFAULT_MORPHIA_PACKAGE);
-        String dbName = this.ninjaProperties.getWithDefault(MONGODB_DBNAME, DEFAULT_MONGODB_NAME);
-        
-        this.Morphia = new Morphia().mapPackage(packageName);
-        this.datastore = this.Morphia.createDatastore(this.mongoClient, dbName);
-        
-        LOG.info("Mapped Morphia models of package '" + packageName + "' and created Morphia Datastore to database '" + dbName + "'");
-    }
-
     public void ensureIndexes(boolean bl) {
         this.datastore.ensureIndexes(bl);
     }
