@@ -15,11 +15,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.binggl</groupId>
 	<artifactId>ninja-mongodb-module</artifactId>
-	<version>1.0.5-SNAPSHOT</version>
+	<version>1.0.5</version>
 	<packaging>jar</packaging>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<ninjaframework.version>5.3.0</ninjaframework.version>
+		<ninjaframework.version>5.3.1</ninjaframework.version>
 	</properties>
 	<name>Ninja Framework MongoDB Module</name>
 	<description>
