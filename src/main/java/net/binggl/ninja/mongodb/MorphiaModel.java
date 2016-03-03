@@ -21,4 +21,8 @@ public class MorphiaModel implements Serializable {
     public ObjectId getId() {
         return this.objectId;
     }
+    
+    public void setId(ObjectId objectId) {
+        this.objectId = objectId;
+    }
 }
