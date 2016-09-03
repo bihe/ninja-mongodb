@@ -15,11 +15,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.binggl</groupId>
 	<artifactId>ninja-mongodb-module</artifactId>
-	<version>1.0.7-SNAPSHOT</version>
+	<version>1.0.7</version>
 	<packaging>jar</packaging>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<ninjaframework.version>5.4.0</ninjaframework.version>
+		<ninjaframework.version>5.8.0</ninjaframework.version>
+		<morphia.version>1.2.1</morphia.version>
+		<mongodb.version>3.3.0</mongodb.version>
 	</properties>
 	<name>Ninja Framework MongoDB Module</name>
 	<description>
@@ -133,12 +135,12 @@
 		<dependency>
 			<groupId>org.mongodb.morphia</groupId>
 			<artifactId>morphia</artifactId>
-			<version>1.1.1</version>
+			<version>${morphia.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mongodb</groupId>
 			<artifactId>mongo-java-driver</artifactId>
-			<version>3.2.2</version>
+			<version>${mongodb.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.guava</groupId>
@@ -154,9 +156,16 @@
 		<dependency>
 		    <groupId>de.flapdoodle.embed</groupId>
 		    <artifactId>de.flapdoodle.embed.mongo</artifactId>
-		    <version>1.50.2</version>
+		    <version>1.50.5</version>
 		    <scope>test</scope>
 		</dependency>
+		<dependency>
+		    <groupId>org.apache.commons</groupId>
+		    <artifactId>commons-compress</artifactId>
+		    <version>1.12</version>
+		    <scope>test</scope>
+		</dependency>
+		
 	</dependencies>
 	
 	<profiles>
