@@ -9,7 +9,7 @@ import org.apache.commons.lang.StringUtils;
 public enum MongoAuthMechanism {
 	SCRAM_SHA_1("SCRAM-SHA-1"), MONGODB_CR("MONGODB-CR"), MONGO_X509("MONGO-X509");
 
-	private String text;
+	private final String text;
 
 	MongoAuthMechanism(String text) {
 		this.text = text;

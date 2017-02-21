@@ -19,21 +19,22 @@ import com.mongodb.ServerAddress;
 
 import ninja.utils.NinjaProperties;
 
-
 /**
  * Convinent service class for interacting with MongoDb over Morphia
+ *
  * @author bihe (original author: skubiak)
  */
 @Singleton
 public class MongoDB {
+
     private static final Logger LOG = LoggerFactory.getLogger(MongoDB.class);
-    
+
     private static final int DEFAULT_MONGODB_PORT = 27017;
     private static final String DEFAULT_MORPHIA_PACKAGE = "models";
     private static final String DEFAULT_MONGODB_NAME = "MyMongoDb";
     private static final String DEFAULT_MONGODB_HOST = "localhost";
     private static final String DEFAULT_AUTH_MECHANISM = "SCRAM-SHA-1";
-    
+
     private static final String MONGODB_HOST = "ninja.mongodb.host";
     private static final String MONGODB_PORT = "ninja.mongodb.port";
     private static final String MONGODB_USER = "ninja.mongodb.user";
@@ -44,28 +45,27 @@ public class MongoDB {
     private static final String MONGODB_CONNECT_ON_STARTUP = "ninja.mongodb.connectonstart";
     private static final String MORPHIA_PACKAGE = "ninja.morphia.package";
     private static final String MORPHIA_INIT = "ninja.morphia.init";
-    
+
     private Datastore datastore;
     private Morphia morphia;
     private MongoClient mongoClient = null;
-    private NinjaProperties ninjaProperties;
+    private final NinjaProperties ninjaProperties;
 
-    
     @Inject
     public MongoDB(NinjaProperties ninjaProperties) {
         this.ninjaProperties = ninjaProperties;
-        
+
         if (this.ninjaProperties.getBooleanWithDefault(MONGODB_CONNECT_ON_STARTUP, true)) {
-        	this.connect();
+            this.connect();
         }
-        
+
         // init morphia is only possible if connect on startup is true
         if (this.ninjaProperties.getBooleanWithDefault(MONGODB_CONNECT_ON_STARTUP, true)
-        		&& this.ninjaProperties.getBooleanWithDefault(MORPHIA_INIT, true)) {
+                && this.ninjaProperties.getBooleanWithDefault(MORPHIA_INIT, true)) {
             this.initMorphia();
         }
     }
-    
+
     public Datastore getDatastore() {
         return this.datastore;
     }
@@ -77,83 +77,86 @@ public class MongoDB {
     public MongoClient getMongoClient() {
         return this.mongoClient;
     }
-	
+
     public void connect() {
         String host = this.ninjaProperties.getWithDefault(MONGODB_HOST, DEFAULT_MONGODB_HOST);
         int port = this.ninjaProperties.getIntegerWithDefault(MONGODB_PORT, DEFAULT_MONGODB_PORT);
-        
+
         String username = this.ninjaProperties.getWithDefault(MONGODB_USER, null);
         String password = this.ninjaProperties.getWithDefault(MONGODB_PASS, null);
         String authdb = this.ninjaProperties.getWithDefault(MONGODB_AUTHDB, DEFAULT_MONGODB_NAME);
-        
-        MongoAuthMechanism mechanism = MongoAuthMechanism.SCRAM_SHA_1;
-        if (StringUtils.isNotBlank(username)) {
-        	mechanism = MongoAuthMechanism.fromString(
-        			this.ninjaProperties.getWithDefault(MONGODB_AUTH_MECHANISM, DEFAULT_AUTH_MECHANISM));
 
-        	if(mechanism == MongoAuthMechanism.MONGO_X509) {
-        		LOG.info("Will use MONGO-X509 mechanism to authenticate user.");
-        		this.mongoClient = this.createClient(mechanism, host, port, username, password, authdb);
+        MongoAuthMechanism mechanism;
+        
+        if (StringUtils.isNotBlank(username)) {
+            mechanism = MongoAuthMechanism.fromString(
+                    this.ninjaProperties.getWithDefault(MONGODB_AUTH_MECHANISM, DEFAULT_AUTH_MECHANISM));
+
+            if (mechanism == MongoAuthMechanism.MONGO_X509) {
+                LOG.info("Will use MONGO-X509 mechanism to authenticate user.");
+                this.mongoClient = this.createClient(mechanism, host, port, username, password, authdb);
                 LOG.info("Successfully created MongoClient @ {}:{} with authentication {}/*******", new Object[]{host, port, username});
-        	} else {
-        		if (StringUtils.isBlank(password) || 
-                        StringUtils.isBlank(authdb)) {
-        			throw new IllegalArgumentException("The parameters authdb and password cannot be blank!");
-        		}
-        		this.mongoClient = this.createClient(mechanism, host, port, username, password, authdb);
+            }
+            else {
+                if (StringUtils.isBlank(password)
+                        || StringUtils.isBlank(authdb)) {
+                    throw new IllegalArgumentException("The parameters authdb and password cannot be blank!");
+                }
+                this.mongoClient = this.createClient(mechanism, host, port, username, password, authdb);
                 LOG.info("Successfully created MongoClient @ {}:{} with authentication {}/*******", new Object[]{host, port, username});
-        	}
-        } else {
+            }
+        }
+        else {
             this.mongoClient = new MongoClient(host, port);
             LOG.info("Successfully created MongoClient @ {}:{}", host, port);
         }
     }
-    
+
     public void disconnect() {
-    	Preconditions.checkNotNull(this.mongoClient, "MongoClient was not initialized!");
-    	this.mongoClient.close();
+        Preconditions.checkNotNull(this.mongoClient, "MongoClient was not initialized!");
+        this.mongoClient.close();
     }
-    
+
     public void initMorphia() {
-    	Preconditions.checkNotNull(this.mongoClient, "MongoClient was not initialized!");
-    	
+        Preconditions.checkNotNull(this.mongoClient, "MongoClient was not initialized!");
+
         String packageName = this.ninjaProperties.getWithDefault(MORPHIA_PACKAGE, DEFAULT_MORPHIA_PACKAGE);
         String dbName = this.ninjaProperties.getWithDefault(MONGODB_DBNAME, DEFAULT_MONGODB_NAME);
-        
+
         this.morphia = new Morphia().mapPackage(packageName);
         this.datastore = this.morphia.createDatastore(this.mongoClient, dbName);
-        
+
         LOG.info("Mapped Morphia models of package '" + packageName + "' and created Morphia Datastore to database '" + dbName + "'");
     }
-    
+
     private MongoClient createClient(MongoAuthMechanism mechanism, String host, int port, String username, String password, String authdb) {
-    	MongoClient client = null;
-    	MongoCredential credential = null;
-    	
-    	switch(mechanism) {
-    		case SCRAM_SHA_1: 
-    			credential = MongoCredential.createScramSha1Credential(
-	                    username, 
-	                    authdb, 
-	                    password.toCharArray());
-    			break;
-    		case MONGODB_CR: 
-    			credential = MongoCredential.createMongoCRCredential(
-	                    username, 
-	                    authdb, 
-	                    password.toCharArray());
-    			break;
-    		case MONGO_X509: 
-    			credential = MongoCredential.createMongoX509Credential(username);
-    			break;
-    	}
-    	
-    	client = new MongoClient(new ServerAddress(host, port), 
-                Arrays.asList(new MongoCredential[]{ credential })
-			);
-    	return client;
+        MongoClient client;
+        MongoCredential credential = null;
+
+        switch (mechanism) {
+            case SCRAM_SHA_1:
+                credential = MongoCredential.createScramSha1Credential(
+                        username,
+                        authdb,
+                        password.toCharArray());
+                break;
+            case MONGODB_CR:
+                credential = MongoCredential.createMongoCRCredential(
+                        username,
+                        authdb,
+                        password.toCharArray());
+                break;
+            case MONGO_X509:
+                credential = MongoCredential.createMongoX509Credential(username);
+                break;
+        }
+
+        client = new MongoClient(new ServerAddress(host, port),
+                Arrays.asList(new MongoCredential[]{credential})
+        );
+        return client;
     }
-    
+
     public void ensureIndexes(boolean bl) {
         this.datastore.ensureIndexes(bl);
     }
@@ -162,15 +165,14 @@ public class MongoDB {
         this.datastore.ensureCaps();
     }
 
-    
     /**
-     * Retrieves a mapped Morphia object from MongoDb. If the id is not of 
+     * Retrieves a mapped Morphia object from MongoDb. If the id is not of
      * type ObjectId, it will we converted to ObjectId
-     * 
+     *
      * @param id The id of the object
      * @param <T> generic type
      * @param clazz The mapped Morphia class
-     * 
+     *
      * @return The reqeusted class from MongoDb or null if none found
      */
     public <T extends Object> T findById(Object id, Class<T> clazz) {
@@ -179,7 +181,7 @@ public class MongoDB {
 
         return this.datastore.get(clazz, (id instanceof ObjectId) ? id : new ObjectId(String.valueOf(id)));
     }
-    
+
     /**
      * Retrieves a list of mapped Morphia objects from MongoDB
      *
@@ -239,9 +241,9 @@ public class MongoDB {
 
         this.datastore.delete(this.datastore.createQuery(clazz));
     }
-    
+
     /**
-     * Drops all data in mognodb on the configured database in 
+     * Drops all data in mognodb on the configured database in
      * ninja framework application.conf
      */
     public void dropDatabase() {
