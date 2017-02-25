@@ -205,7 +205,7 @@ public class MongoDB {
     public <T extends Object> long countAll(Class<T> clazz) {
         Preconditions.checkNotNull(clazz, "Tryed to count all a morphia objects of a given object, but given object is null");
 
-        return this.datastore.find(clazz).countAll();
+        return this.datastore.find(clazz).count();
     }
 
     /**
